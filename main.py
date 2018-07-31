@@ -4,9 +4,7 @@ import tkFileDialog
 import tkMessageBox
 import shutil
 import glob
-
-# Variable for loaded files #
-cameraFiles = ""
+from importClass import *
 
 def status_update(type, textInfo):
     lblStatus['text'] = '%s' % (textInfo)
@@ -44,43 +42,42 @@ def move_files():
     # Sorts by file type
     #   .jpg/.cr2 -> photos/RAW
     #   .mp4/.mov -> videos/RAW
-    print cameraFiles
-    global cameraFiles
-    if e1.get() != "" and len(cameraFiles) > 0:
+    if e1.get() != "" and cFiles.numFiles() > 0:
         dest_photo = "/Users/justin/Pictures/%s/Photos/RAW/" % (e1.get())
         dest_video = "/Users/justin/Pictures/%s/Videos/RAW/" % (e1.get())
-        for file in cameraFiles:
+        for file in cFiles.getFiles():
             #if file contains jpg or csr
             file = file.name.lower()
             # tkMessageBox.showinfo('debug;', "files: %s" % (file))
-            if '.jpg' in file or '.cr2':
+            if '.jpg' in file or '.cr2' in file:
                 # in future use shutil.move once it works
                 shutil.copy(file, dest_photo)
+                status_update('suc', 'Files have been successfully moved')
             #else if file contains mp4 or move
             elif '.mov' in file or '.mp4' in file or '.m4v' in file:
                 # in future use shutil.move once it works
                 shutil.copy(file, dest_video)
+                status_update('suc', 'Files have been successfully moved')
             else:
                 status_update('error', 'File type not found')
+        # Empty the queue after copying
+        cFiles.clearQueue()
     else:
         if e1.get() == "":
             status_update("error","Directory name cannot be blank.")
-        elif len(cameraFiles) <= 0:
+        elif cFiles.numFiles() <= 0:
             status_update("error","No media has been selected.")
         else:
             status_update('error', 'Unknown error has occurred')
 
 def find_files():
-    #root = Tkinter.Tk()
-    global cameraFiles
-    cameraFiles = tkFileDialog.askopenfiles(parent=master,mode='rb',title='Choose a file')
-    if len(cameraFiles) <= 0:
+    cFiles.setFiles(tkFileDialog.askopenfiles(parent=master,mode='rb',title='Choose a file'))
+    if cFiles.numFiles() <= 0:
         status_update('warn', 'No files have been selected')
         btn_move['state'] = 'disabled'
     else:
-        status_update('suc',"Media loaded in queue: %s file(s)" % len(cameraFiles))
+        status_update('suc',"Media loaded in queue: %s file(s)" % cFiles.numFiles())
         btn_move['state'] = 'normal'
-        print cameraFiles
     # pass
 
 master = Tk()
@@ -104,20 +101,28 @@ btn_move.grid(row=3, column=1, sticky=W, pady=4)
 btn_find = Button(master, text='Find Files', command=find_files)
 btn_find.grid(row=3, column=0, sticky=E, pady=4)
 
+#Finds removable media in /Volumes/
+#Excludes certain volumes
 vols = os.walk('/Volumes/').next()[1]
+exclude = set(['OS X Base System','Macintosh HD','DROPME','TIMEMACHINE'])
+vols[:] = [d for d in vols if d not in exclude]
+
 # Create a Tkinter variable
 tkvar = StringVar(master)
 
-# Dictionary with options
-
-
+# Create the dropdown menu and label #
 popupMenu = OptionMenu(master, tkvar, *vols)
-Label(master, text="Choose a dish").grid(row = 6, column = 0)
-popupMenu.grid(row = 6, column=1, columnspan=2)
+Label(master, text="Media:  ").grid(row = 4, column = 0, sticky=W)
+popupMenu.grid(row = 5, column=0, columnspan=2, sticky=EW)
 
 # on change dropdown value
 def change_dropdown(*args):
     print( tkvar.get() )
 
+# link function to change dropdown
+tkvar.trace('w', change_dropdown)
+
+# Test area for the class stuff #
+cFiles = importFiles()
 
 mainloop( )
