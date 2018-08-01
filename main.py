@@ -86,6 +86,8 @@ Label(master, text="Enter the Name of the Album").grid(row=0, columnspan=2)
 # Create status label #
 lblStatus = Label(master, text="Status:")
 lblStatus.grid(row=2, column=0, sticky=W)
+lblDeviceInfo = Label(master, text='')
+lblDeviceInfo.grid(row=6, column=0, sticky=W)
 
 # Textbox for Album name #
 e1 = Entry(master)
@@ -111,18 +113,46 @@ vols[:] = [d for d in vols if d not in exclude]
 tkvar = StringVar(master)
 
 # Create the dropdown menu and label #
-popupMenu = OptionMenu(master, tkvar, *vols)
-Label(master, text="Media:  ").grid(row = 4, column = 0, sticky=W)
+try:
+    popupMenu = OptionMenu(master, tkvar, *vols)
+except:
+    popupMenu = OptionMenu(master, tkvar, 'None')
+Label(master, text="--------TESTING BEYOND THIS POINT!!!!--------\n\nChoose a device to pull media from:  ").grid(row = 4, column = 0, sticky=W)
 popupMenu.grid(row = 5, column=0, columnspan=2, sticky=EW)
 
 # on change dropdown value
 def change_dropdown(*args):
-    print( tkvar.get() )
+    ctrPhoto = 0
+    ctrVideo = 0
+    for root, dirs, files in os.walk("/Volumes/%s/" % tkvar.get(), topdown=True):
+        for name in files:
+            # Ignore hidden files #
+            if name.startswith('.'):
+                break
+            else:
+                # checks to see if file is a photo #
+                ##### Should make a function for this #####
+                if '.jpg' in name.lower() or '.cr2' in name.lower():
+                    ctrPhoto += 1
+                    print '%s %s' % (ctrPhoto,name)
+                # checks to see if file is a video #
+                ##### Should make a function for this #####
+                if '.mov' in name.lower() or '.mp4' in name.lower() or '.m4v' in name.lower():
+                    ctrVideo += 1
+    lblDeviceInfo['text'] = 'Number of Photos: %s\nNumber of Videos: %s' % (ctrPhoto, ctrVideo)
+    lblDeviceInfo['fg'] = 'red'
 
 # link function to change dropdown
 tkvar.trace('w', change_dropdown)
 
 # Test area for the class stuff #
 cFiles = importFiles()
+
+
+####### Live testing area #######
+# for file in os.listdir("/Users/justin/Pictures/Test1/Photos/RAW"):
+#     if file.endswith(".jpg"):
+#         print os.path.join("/Users/justin/Pictures/Test1/Photos/RAW", file)
+
 
 mainloop( )
