@@ -46,20 +46,13 @@ def move_files():
         dest_photo = "/Users/justin/Pictures/%s/Photos/RAW/" % (e1.get())
         dest_video = "/Users/justin/Pictures/%s/Videos/RAW/" % (e1.get())
         for file in cFiles.getFiles():
-            #if file contains jpg or csr
-            file = file.name.lower()
-            # tkMessageBox.showinfo('debug;', "files: %s" % (file))
-            if '.jpg' in file or '.cr2' in file:
-                # in future use shutil.move once it works
-                shutil.copy(file, dest_photo)
-                status_update('suc', 'Files have been successfully moved')
-            #else if file contains mp4 or move
-            elif '.mov' in file or '.mp4' in file or '.m4v' in file:
-                # in future use shutil.move once it works
-                shutil.copy(file, dest_video)
-                status_update('suc', 'Files have been successfully moved')
-            else:
-                status_update('error', 'File type not found')
+            shutil.copy(file, "/Users/justin/Pictures/%s/%ss/RAW/" % (e1.get(),cFiles.isPhotoVideo(file)))
+        # for photo in cFiles.getPhotos():
+        #     shutil.copy(file, dest_photo)
+        #     status_update('suc', 'Files have been successfully moved')
+        # for video in cFiles.getVideos():
+        #     shutil.copy(file, dest_video)
+        #     status_update('suc', 'Files have been successfully moved')
         # Empty the queue after copying
         cFiles.clearQueue()
     else:
@@ -72,6 +65,7 @@ def move_files():
 
 def find_files():
     cFiles.setFiles(tkFileDialog.askopenfiles(parent=master,mode='rb',title='Choose a file'))
+    print cFiles.getFiles()
     if cFiles.numFiles() <= 0:
         status_update('warn', 'No files have been selected')
         btn_move['state'] = 'disabled'
@@ -122,24 +116,17 @@ popupMenu.grid(row = 5, column=0, columnspan=2, sticky=EW)
 
 # on change dropdown value
 def change_dropdown(*args):
-    ctrPhoto = 0
-    ctrVideo = 0
+    deviceFiles = importFiles()
     for root, dirs, files in os.walk("/Volumes/%s/" % tkvar.get(), topdown=True):
         for name in files:
             # Ignore hidden files #
             if name.startswith('.'):
                 break
             else:
-                # checks to see if file is a photo #
-                ##### Should make a function for this #####
-                if '.jpg' in name.lower() or '.cr2' in name.lower():
-                    ctrPhoto += 1
-                    print '%s %s' % (ctrPhoto,name)
-                # checks to see if file is a video #
-                ##### Should make a function for this #####
-                if '.mov' in name.lower() or '.mp4' in name.lower() or '.m4v' in name.lower():
-                    ctrVideo += 1
-    lblDeviceInfo['text'] = 'Number of Photos: %s\nNumber of Videos: %s' % (ctrPhoto, ctrVideo)
+                deviceFiles.addFile(name)
+    # Store as variable so for loop only runs once #
+    numDeviceFiles = deviceFiles.fileCount()
+    lblDeviceInfo['text'] = 'Number of Photos: %s\nNumber of Videos: %s' % (numDeviceFiles[0], numDeviceFiles[1])
     lblDeviceInfo['fg'] = 'red'
 
 # link function to change dropdown
