@@ -52,29 +52,21 @@ def move_files():
     #   .jpg/.cr2 -> photos/RAW
     #   .mp4/.mov -> videos/RAW
     if tbxAlbum.get() != "" and queue1.length() > 0:
-    #     # dest_photo = "/Users/justin/Pictures/%s/Photos/RAW/" % (e1.get())
-    #     # dest_video = "/Users/justin/Pictures/%s/Videos/RAW/" % (e1.get())
         for file in queue1.getFiles():
             if file.type != 'Error':
                 try:
+                    # copy2 because it will bring in META data #
                     shutil.copy2(file.fullname, "/Users/justin/Pictures/%s/%ss/RAW/" % (tbxAlbum.get(),file.type))
                 except IOError:
                     status_update("error","Directory does not exist, press Create and try again.")
-    #     # for photo in cFiles.getPhotos():
-    #     #     shutil.copy(file, dest_photo)
-    #     #     status_update('suc', 'Files have been successfully moved')
-    #     # for video in cFiles.getVideos():
-    #     #     shutil.copy(file, dest_video)
-    #     #     status_update('suc', 'Files have been successfully moved')
-    #     # Empty the queue after copying
     #    cFiles.clearQueue()
     else:
         if tbxAlbum.get() == "":
             status_update("error","Directory name cannot be blank.")
-    #     elif cFiles.numFiles() <= 0:
-    #         status_update("error","No media has been selected.")
-    #     else:
-    #         status_update('error', 'Unknown error has occurred')
+        elif queue1.length() <= 0:
+            status_update("error","No media has been selected.")
+        else:
+            status_update('error', 'Unknown error has occurred')
 
 def find_files():
     fdFiles = tkFileDialog.askopenfiles(parent=master,title='Choose a file')
@@ -85,7 +77,6 @@ def find_files():
         popupMenu['state'] = 'disabled'
         for file in fdFiles:
             queue1.append(str(file).split('\'')[1])
-        # status_update('suc',"Media loaded in queue: %s file(s)" % fdFiles)
         btn_move['state'] = 'normal'
         lblDeviceInfo['text'] = '%s' % (displayFiles())
         lblDeviceInfo['fg'] = 'red'
@@ -102,8 +93,6 @@ def change_dropdown(*args):
                     break
                 else:
                     queue1.append(os.path.join(root, name))
-        # Store as variable so for loop only runs once #
-
         lblDeviceInfo['text'] = '%s' % (displayFiles())
         lblDeviceInfo['fg'] = 'red'
 
