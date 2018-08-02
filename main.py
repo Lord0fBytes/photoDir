@@ -4,7 +4,6 @@ import tkFileDialog
 import tkMessageBox
 import shutil
 import glob
-from importClass import *
 import time, datetime
 from importQueue import *
 
@@ -86,17 +85,37 @@ def find_files():
         btn_move['state'] = 'normal'
         lblDeviceInfo['text'] = '%s' % (displayFiles())
         lblDeviceInfo['fg'] = 'red'
-    # pass
+
+# on change dropdown value
+def change_dropdown(*args):
+    if tkvar.get() != 'None':
+        for root, dirs, files in os.walk("/Volumes/%s/" % tkvar.get(), topdown=True):
+            print root
+            for name in files:
+                # Ignore hidden files #
+                if name.startswith('.'):
+                    break
+                else:
+                    queue1.append(os.path.join(root, name))
+        # Store as variable so for loop only runs once #
+
+        lblDeviceInfo['text'] = '%s' % (displayFiles())
+        lblDeviceInfo['fg'] = 'red'
+
+################### VARIABLE DECLARATIONS #########################
 
 master = Tk()
-# Creates header label #
-Label(master, text="Enter the Name of the Album").grid(row=0, columnspan=2)
-# Create status label #
+# Initiate import files variable #
+queue1 = importQueue()
+
+# Create status labels #
 lblStatus = Label(master, text="Status:")
 lblStatus.grid(row=2, column=0, sticky=W)
 lblDeviceInfo = Label(master, text='')
 lblDeviceInfo.grid(row=6, column=0, sticky=W)
 
+# Creates header label #
+Label(master, text="Enter the Name of the Album").grid(row=0, columnspan=2)
 # Textbox for Album name #
 e1 = Entry(master)
 e1.grid(row=1, column=0)
@@ -118,14 +137,8 @@ btn_find.grid(row=3, column=1, sticky=W, pady=4)
 vols = os.walk('/Volumes/').next()[1]
 exclude = set(['OS X Base System','Macintosh HD','DROPME','TIMEMACHINE'])
 vols[:] = [d for d in vols if d not in exclude]
-
 # Create a Tkinter variable
 tkvar = StringVar(master)
-
-# Initiate import files variable #
-# cFiles = importFiles()
-queue1 = importQueue()
-
 # Create the dropdown menu and label #
 try:
     popupMenu = OptionMenu(master, tkvar, *vols)
@@ -133,23 +146,6 @@ except:
     popupMenu = OptionMenu(master, tkvar, 'None')
 Label(master, text="---TESTING BEYOND THIS POINT!!!!---\n\nChoose a device to pull media from:  ").grid(row = 4, column = 0, columnspan=3, sticky=W)
 popupMenu.grid(row = 5, column=0, columnspan=2, sticky=EW)
-
-# on change dropdown value
-def change_dropdown(*args):
-    if tkvar.get() != 'None':
-        for root, dirs, files in os.walk("/Volumes/%s/" % tkvar.get(), topdown=True):
-            print root
-            for name in files:
-                # Ignore hidden files #
-                if name.startswith('.'):
-                    break
-                else:
-                    queue1.append(os.path.join(root, name))
-        # Store as variable so for loop only runs once #
-
-        lblDeviceInfo['text'] = '%s' % (displayFiles())
-        lblDeviceInfo['fg'] = 'red'
-
 # link function to change dropdown
 tkvar.trace('w', change_dropdown)
 
