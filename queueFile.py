@@ -13,6 +13,9 @@ class queueFile(object):
     def getFullName(self):
         return self.type
 
+    def fullname(self):
+        return self.fullname
+
     def getType(self, file):
         file = file.lower()
         if '.jpg' in file or '.cr2' in file:

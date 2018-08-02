@@ -29,7 +29,7 @@ def displayFiles():
 def create_directory():
    # Check to see if location exists
    # Create the folder structure if so
-   directory = "/Users/justin/Pictures/%s/" % (e1.get())
+   directory = "/Users/justin/Pictures/%s/" % (tbxAlbum.get())
    if not os.path.isdir(directory):
        os.makedirs(directory)
        os.makedirs(directory+"Photos/")
@@ -51,11 +51,11 @@ def move_files():
     # Sorts by file type
     #   .jpg/.cr2 -> photos/RAW
     #   .mp4/.mov -> videos/RAW
-    # if e1.get() != "" and cFiles.numFiles() > 0:
+    if tbxAlbum.get() != "" and queue1.length() > 0:
     #     # dest_photo = "/Users/justin/Pictures/%s/Photos/RAW/" % (e1.get())
     #     # dest_video = "/Users/justin/Pictures/%s/Videos/RAW/" % (e1.get())
-    #     for file in cFiles.getFiles():
-    #         shutil.copy(file, "/Users/justin/Pictures/%s/%ss/RAW/" % (e1.get(),cFiles.isPhotoVideo(file)))
+        for file in queue1.getFiles():
+    #         shutil.copy2(file, "/Users/justin/Pictures/%s/%ss/RAW/" % (tbxAlbum.get(),photos))
     #     # for photo in cFiles.getPhotos():
     #     #     shutil.copy(file, dest_photo)
     #     #     status_update('suc', 'Files have been successfully moved')
@@ -64,14 +64,15 @@ def move_files():
     #     #     status_update('suc', 'Files have been successfully moved')
     #     # Empty the queue after copying
     #     cFiles.clearQueue()
-    # else:
-    #     if e1.get() == "":
-    #         status_update("error","Directory name cannot be blank.")
+            print file.getAttribute('type')
+            print file.fullname
+    else:
+        if tbxAlbum.get() == "":
+            status_update("error","Directory name cannot be blank.")
     #     elif cFiles.numFiles() <= 0:
     #         status_update("error","No media has been selected.")
     #     else:
     #         status_update('error', 'Unknown error has occurred')
-    pass
 
 def find_files():
     fdFiles = tkFileDialog.askopenfiles(parent=master,title='Choose a file')
@@ -79,6 +80,7 @@ def find_files():
         status_update('warn', 'No files have been selected')
         btn_move['state'] = 'disabled'
     else:
+        popupMenu['state'] = 'disabled'
         for file in fdFiles:
             queue1.append(str(file).split('\'')[1])
         # status_update('suc',"Media loaded in queue: %s file(s)" % fdFiles)
@@ -89,6 +91,7 @@ def find_files():
 # on change dropdown value
 def change_dropdown(*args):
     if tkvar.get() != 'None':
+        btn_find['state'] = 'disabled'
         for root, dirs, files in os.walk("/Volumes/%s/" % tkvar.get(), topdown=True):
             print root
             for name in files:
@@ -111,14 +114,14 @@ queue1 = importQueue()
 # Create status labels #
 lblStatus = Label(master, text="Status:")
 lblStatus.grid(row=2, column=0, sticky=W)
-lblDeviceInfo = Label(master, text='')
+lblDeviceInfo = Label(master, text='Currently Loaded into Import Queue')
 lblDeviceInfo.grid(row=6, column=0, sticky=W)
 
 # Creates header label #
 Label(master, text="Enter the Name of the Album").grid(row=0, columnspan=2)
 # Textbox for Album name #
-e1 = Entry(master)
-e1.grid(row=1, column=0)
+tbxAlbum = Entry(master)
+tbxAlbum.grid(row=1, column=0)
 
 # Buttons on the form #
 btn_quit = Button(master, text='Quit', command=master.quit)

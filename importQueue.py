@@ -8,12 +8,19 @@ class importQueue(object):
     def append(self, filename):
         self.queue.append(queueFile(filename))
 
-    def getItem(self, index):
-        return self.queue[index].getFullName()
+    def getFiles(self):
+        # files = []
+        # for file in self.queue:
+        #     files.append(file.fullname)
+        # return files
+        return self.queue
 
     def getDateCount(self):
         # Gets the count for each date
         pass
+
+    def length(self):
+        return len(self.queue)
 
     def getExtCount(self, filetype):
         # Gets teh count of each extension #
