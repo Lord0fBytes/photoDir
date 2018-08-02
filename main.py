@@ -55,7 +55,11 @@ def move_files():
     #     # dest_photo = "/Users/justin/Pictures/%s/Photos/RAW/" % (e1.get())
     #     # dest_video = "/Users/justin/Pictures/%s/Videos/RAW/" % (e1.get())
         for file in queue1.getFiles():
-    #         shutil.copy2(file, "/Users/justin/Pictures/%s/%ss/RAW/" % (tbxAlbum.get(),photos))
+            if file.type != 'Error':
+                try:
+                    shutil.copy2(file.fullname, "/Users/justin/Pictures/%s/%ss/RAW/" % (tbxAlbum.get(),file.type))
+                except IOError:
+                    status_update("error","Directory does not exist, press Create and try again.")
     #     # for photo in cFiles.getPhotos():
     #     #     shutil.copy(file, dest_photo)
     #     #     status_update('suc', 'Files have been successfully moved')
@@ -63,9 +67,7 @@ def move_files():
     #     #     shutil.copy(file, dest_video)
     #     #     status_update('suc', 'Files have been successfully moved')
     #     # Empty the queue after copying
-    #     cFiles.clearQueue()
-            print file.getAttribute('type')
-            print file.fullname
+    #    cFiles.clearQueue()
     else:
         if tbxAlbum.get() == "":
             status_update("error","Directory name cannot be blank.")
@@ -93,7 +95,7 @@ def change_dropdown(*args):
     if tkvar.get() != 'None':
         btn_find['state'] = 'disabled'
         for root, dirs, files in os.walk("/Volumes/%s/" % tkvar.get(), topdown=True):
-            print root
+            # print root
             for name in files:
                 # Ignore hidden files #
                 if name.startswith('.'):

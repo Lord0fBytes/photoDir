@@ -26,8 +26,8 @@ class importQueue(object):
         # Gets teh count of each extension #
         counts = {}
         for file in self.queue:
-            ext = file.getAttribute('ext').lower()
-            if file.getAttribute('type') == filetype:
+            ext = file.extension.lower()
+            if file.type == filetype:
                 if ext not in counts:
                     counts[ext] = 1
                 else:
@@ -38,9 +38,9 @@ class importQueue(object):
         # Get the count for photos vs videos #
         counts = {'Photo':0, 'Video':0}
         for file in self.queue:
-            if file.getAttribute('type') == 'Photo':
+            if file.type == 'Photo':
                 counts['Photo'] += 1
-            elif file.getAttribute('type') == 'Video':
+            elif file.type == 'Video':
                 counts['Video'] += 1
             else:
                 pass
