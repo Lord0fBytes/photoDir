@@ -26,6 +26,15 @@ def displayFiles():
             status += "\t%s: %s\n" % (ext, queue1.getExtCount(type)[ext])
     return status
 
+def generateDateCbxList():
+    for date in queue1.getDateList():
+        #queue1.getDateList()[date] = Variable()
+        print date
+        # test = Checkbutton(frmDateImport, text='test', variable=0)
+        # test.pack()
+        l = Checkbutton(frmDateImport, text=date, variable=queue1.getDateList()[date])
+        l.pack()
+
 def create_directory():
    # Check to see if location exists
    # Create the folder structure if so
@@ -78,14 +87,15 @@ def find_files():
         for file in fdFiles:
             queue1.append(str(file).split('\'')[1])
         btn_move['state'] = 'normal'
-        lblDeviceInfo['text'] = '%s' % (displayFiles())
-        lblDeviceInfo['fg'] = 'red'
+        lblAllImport['text'] = 'Test\n%s' % (displayFiles())
+        lblAllImport['fg'] = 'red'
+        generateDateCbxList()
 
 # on change dropdown value
 def change_dropdown(*args):
     if tkvar.get() != 'None':
         btn_find['state'] = 'disabled'
-        for root, dirs, files in os.walk("/Volumes/%s/" % tkvar.get(), topdown=True):
+        for root, dirs, files in os.walk("/Volumes/%s/" % strDevice, topdown=True):
             # print root
             for name in files:
                 # Ignore hidden files #
@@ -93,26 +103,40 @@ def change_dropdown(*args):
                     break
                 else:
                     queue1.append(os.path.join(root, name))
-        lblDeviceInfo['text'] = '%s' % (displayFiles())
-        lblDeviceInfo['fg'] = 'red'
+        lblAllImport['text'] = '%s' % (displayFiles())
+        lblAllImport['fg'] = 'red'
+        # Generate the checkboxes #
+        print queue1.getDateList()
+
+def import_all():
+    pass
+
+def import_date():
+    pass
 
 ################### VARIABLE DECLARATIONS #########################
 
 master = Tk()
+frmAllImport = Frame(master, bd=2, relief='ridge')
+frmDateImport = Frame(master, bd=2, relief='ridge')
+frmAllImport.grid(row=6, column=0, sticky=NSEW)
+frmDateImport.grid(row=6, column=1, columnspan=2, sticky=NSEW)
 # Initiate import files variable #
 queue1 = importQueue()
+dateList = {}
 
 # Create status labels #
 lblStatus = Label(master, text="Status:")
 lblStatus.grid(row=2, column=0, sticky=W)
-lblDeviceInfo = Label(master, text='Currently Loaded into Import Queue')
-lblDeviceInfo.grid(row=6, column=0, sticky=W)
+lblAllImport = Label(frmAllImport, text='', anchor=W)
+lblAllImport.pack()
 
 # Creates header label #
 Label(master, text="Enter the Name of the Album").grid(row=0, columnspan=2)
 # Textbox for Album name #
 tbxAlbum = Entry(master)
 tbxAlbum.grid(row=1, column=0)
+
 
 # Buttons on the form #
 btn_quit = Button(master, text='Quit', command=master.quit)
@@ -125,6 +149,10 @@ btn_move = Button(master, text='Move Files', state=NORMAL, command=move_files)
 btn_move.grid(row=3, column=2, sticky=E, pady=4)
 btn_find = Button(master, text='Find Files', command=find_files)
 btn_find.grid(row=3, column=1, sticky=W, pady=4)
+btn_importAll = Button(frmAllImport, text='Import All', command=import_all)
+btn_importAll.pack(side='bottom')
+btn_importDate = Button(frmDateImport, text='Import Dates', command=import_date)
+btn_importDate.pack(side='bottom')
 
 #Finds removable media in /Volumes/
 #Excludes certain volumes
