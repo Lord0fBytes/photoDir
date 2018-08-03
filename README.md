@@ -27,3 +27,11 @@ Parent
 - [x] Create 2 frames for organizing GUI
 - [x] Clean up the look of GUI
 - [ ] Continue building on classes for future functions
+
+## TODO (8/2/2018):
+- [ ] Create Import Date button functionality
+- [ ] Remove 'Move' button from GUI
+- [ ] Change 'Find' to 'Manual Import' and shift to the right
+- [ ] Move 'quit' button to bottom right
+- [ ] ClearQueue after copy job
+- [ ] Refresh button next to device dropdown
