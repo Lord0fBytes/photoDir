@@ -8,7 +8,7 @@ class queueFile(object):
         self.filename = os.path.basename(filename)
         self.extension = os.path.splitext(filename)[1]
         self.type = self.getType(self.filename)
-        #self.filedate = datetime.datetime.fromtimestamp(os.path.getmtime(filename)).strftime('%Y-%m-%d')
+        self.filedate = datetime.datetime.fromtimestamp(os.path.getmtime(filename)).strftime('%Y-%m-%d')
 
     def type(self):
         return self.type
