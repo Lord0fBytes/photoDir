@@ -35,3 +35,10 @@ Parent
 - [ ] Move 'quit' button to bottom right
 - [ ] ClearQueue after copy job
 - [ ] Refresh button next to device dropdown
+
+**Ideas:**
+- Display each section on the fly
+  - First is the browse/create
+  - Then Manual or Device choose
+  - Lastly bottom frames
+- Lastly, start over
