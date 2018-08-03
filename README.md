@@ -23,7 +23,7 @@ Parent
     - Date Import: Automatically moves files select based on date to folders
 
 ## TODO (8/1/2018):
-- [ ] Create Date Import method
-- [ ] Create 2 frames for organizing GUI
-- [ ] Clean up the look of GUI
+- [x] Create Date Import method
+- [x] Create 2 frames for organizing GUI
+- [x] Clean up the look of GUI
 - [ ] Continue building on classes for future functions
