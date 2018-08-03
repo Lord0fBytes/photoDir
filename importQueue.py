@@ -1,12 +1,19 @@
 from queueFile import *
+from Tkinter import *
 
 class importQueue(object):
 
     def __init__(self):
         self.queue = []
+        self.datedict = {}
+
+    def dateList(self,fileDate):
+        if fileDate not in self.datedict:
+            self.datedict[fileDate] = IntVar()
 
     def append(self, filename):
         self.queue.append(queueFile(filename))
+        self.dateList(self.queue[len(self.queue)-1].filedate)
 
     def getFiles(self):
         # files = []
@@ -45,3 +52,6 @@ class importQueue(object):
             else:
                 pass
         return counts
+
+    def  getDateList(self):
+        return self.datedict
