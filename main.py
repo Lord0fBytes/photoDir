@@ -23,7 +23,7 @@ def displayFiles():
     for type in queue1.getTypeCount():
         status += "%ss: %s\n" % (type, queue1.getTypeCount()[type])
         for ext in queue1.getExtCount(type):
-            status += "\t%s: %s\n" % (ext, queue1.getExtCount(type)[ext])
+            status += "   |___%s: %s\n" % (ext, queue1.getExtCount(type)[ext])
     return status
 
 def generateDateCbxList():
@@ -86,15 +86,17 @@ def find_files():
         popupMenu['state'] = 'disabled'
         for file in fdFiles:
             queue1.append(str(file).split('\'')[1])
-        btn_move['state'] = 'normal'
-        lblAllImport['text'] = 'Test\n%s' % (displayFiles())
-        lblAllImport['fg'] = 'red'
+        btn_importAll['state'] = 'normal'
+        btn_importDate['state'] = 'normal'
+        lblAllImport['text'] = '%s' % (displayFiles())
         generateDateCbxList()
 
 # on change dropdown value
 def change_dropdown(*args):
     if tkvar.get() != 'None':
         btn_find['state'] = 'disabled'
+        btn_importAll['state'] = 'normal'
+        btn_importDate['state'] = 'normal'
         for root, dirs, files in os.walk("/Volumes/%s/" % strDevice, topdown=True):
             # print root
             for name in files:
@@ -104,12 +106,8 @@ def change_dropdown(*args):
                 else:
                     queue1.append(os.path.join(root, name))
         lblAllImport['text'] = '%s' % (displayFiles())
-        lblAllImport['fg'] = 'red'
         # Generate the checkboxes #
         print queue1.getDateList()
-
-def import_all():
-    pass
 
 def import_date():
     pass
@@ -128,7 +126,7 @@ dateList = {}
 # Create status labels #
 lblStatus = Label(master, text="Status:")
 lblStatus.grid(row=2, column=0, sticky=W)
-lblAllImport = Label(frmAllImport, text='', anchor=W)
+lblAllImport = Label(frmAllImport, text='', anchor='w', justify='left')
 lblAllImport.pack()
 
 # Creates header label #
@@ -140,18 +138,16 @@ tbxAlbum.grid(row=1, column=0)
 
 # Buttons on the form #
 btn_quit = Button(master, text='Quit', command=master.quit)
-btn_quit.grid(row=3, column=0, sticky=W, pady=4)
+btn_quit.grid(row=7, column=2, sticky=EW, pady=4)
 btn_create = Button(master, text='Create', command=create_directory)
 btn_create.grid(row=1, column=2, pady=4, sticky=EW)
 btn_browse = Button(master, text='Browse', command=create_directory)
 btn_browse.grid(row=1, column=1, pady=4, sticky=EW)
-btn_move = Button(master, text='Move Files', state=NORMAL, command=move_files)
-btn_move.grid(row=3, column=2, sticky=E, pady=4)
-btn_find = Button(master, text='Find Files', command=find_files)
-btn_find.grid(row=3, column=1, sticky=W, pady=4)
-btn_importAll = Button(frmAllImport, text='Import All', command=import_all)
+btn_find = Button(master, text='Manual Import', command=find_files)
+btn_find.grid(row=3, column=1, columnspan=2, sticky=EW, pady=4)
+btn_importAll = Button(frmAllImport, text='Import All', state='disabled', command=move_files)
 btn_importAll.pack(side='bottom')
-btn_importDate = Button(frmDateImport, text='Import Dates', command=import_date)
+btn_importDate = Button(frmDateImport, text='Import Dates', state='disabled', command=import_date)
 btn_importDate.pack(side='bottom')
 
 #Finds removable media in /Volumes/
@@ -166,8 +162,8 @@ try:
     popupMenu = OptionMenu(master, tkvar, *vols)
 except:
     popupMenu = OptionMenu(master, tkvar, 'None')
-Label(master, text="---TESTING BEYOND THIS POINT!!!!---\n\nChoose a device to pull media from:  ").grid(row = 4, column = 0, columnspan=3, sticky=W)
-popupMenu.grid(row = 5, column=0, columnspan=2, sticky=EW)
+# Label(master, text="---TESTING BEYOND THIS POINT!!!!---\n\nChoose a device to pull media from:  ").grid(row = 4, column = 0, columnspan=3, sticky=W)
+popupMenu.grid(row = 3, column=0, sticky=EW)
 # link function to change dropdown
 tkvar.trace('w', change_dropdown)
 
