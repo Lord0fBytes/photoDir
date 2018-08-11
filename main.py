@@ -51,11 +51,11 @@ def create_directory():
        os.makedirs(directory+"Videos/Working/Music")
        os.makedirs(directory+"Videos/Working/Sounds")
        os.makedirs(directory+"Videos/Working/Project")
-       status_update('suc', 'Directory: %s has been created' % (directory))
+       status_update('suc', 'Directory has been created')
    else:
        status_update('error','Directory cannot be empty')
 
-def move_files():
+def importFiles(isDate='False', dateTxt=[]):
     # Move the files from /Pictures/Staging to the location above
     # Sorts by file type
     #   .jpg/.cr2 -> photos/RAW
@@ -64,8 +64,12 @@ def move_files():
         for file in queue1.getFiles():
             if file.type != 'Error':
                 try:
-                    # copy2 because it will bring in META data #
-                    shutil.copy2(file.fullname, "/Users/justin/Pictures/%s/%ss/RAW/" % (tbxAlbum.get(),file.type))
+                    if dateTxt:
+                        if file.filedate in dateTxt:
+                            shutil.copy2(file.fullname, "/Users/justin/Pictures/%s/%ss/RAW/" % (tbxAlbum.get(),file.type))
+                        # copy2 because it will bring in META data #
+                    else:
+                        shutil.copy2(file.fullname, "/Users/justin/Pictures/%s/%ss/RAW/" % (tbxAlbum.get(),file.type))
                 except IOError:
                     status_update("error","Directory does not exist, press Create and try again.")
     #    cFiles.clearQueue()
@@ -76,6 +80,9 @@ def move_files():
             status_update("error","No media has been selected.")
         else:
             status_update('error', 'Unknown error has occurred')
+
+def move_files():
+    pass
 
 def find_files():
     fdFiles = tkFileDialog.askopenfiles(parent=master,title='Choose a file')
@@ -97,7 +104,7 @@ def change_dropdown(*args):
         btn_find['state'] = 'disabled'
         btn_importAll['state'] = 'normal'
         btn_importDate['state'] = 'normal'
-        for root, dirs, files in os.walk("/Volumes/%s/" % strDevice, topdown=True):
+        for root, dirs, files in os.walk("/Volumes/%s/" % tkvar.get(), topdown=True):
             # print root
             for name in files:
                 # Ignore hidden files #
@@ -107,10 +114,17 @@ def change_dropdown(*args):
                     queue1.append(os.path.join(root, name))
         lblAllImport['text'] = '%s' % (displayFiles())
         # Generate the checkboxes #
-        print queue1.getDateList()
+        generateDateCbxList()
 
 def import_date():
-    pass
+    tempDates=[]
+    for val1 in queue1.getDateList():
+        if queue1.getDateList()[val1].get() == 1:
+            tempDates.append(val1)
+    if tempDates:
+        importFiles('True',tempDates)
+    else:
+        status_update("error","Select one date range.")
 
 ################### VARIABLE DECLARATIONS #########################
 
@@ -145,7 +159,7 @@ btn_browse = Button(master, text='Browse', command=create_directory)
 btn_browse.grid(row=1, column=1, pady=4, sticky=EW)
 btn_find = Button(master, text='Manual Import', command=find_files)
 btn_find.grid(row=3, column=1, columnspan=2, sticky=EW, pady=4)
-btn_importAll = Button(frmAllImport, text='Import All', state='disabled', command=move_files)
+btn_importAll = Button(frmAllImport, text='Import All', state='disabled', command=importFiles)
 btn_importAll.pack(side='bottom')
 btn_importDate = Button(frmDateImport, text='Import Dates', state='disabled', command=import_date)
 btn_importDate.pack(side='bottom')
