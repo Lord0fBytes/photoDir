@@ -1,6 +1,7 @@
 # PhotoDir - Importer of Media
 This python based application will be used to create a specific folder structure and import media from SD cards. 
 - It can create a directory structure like this:
+
 ```
 Parent
 |_Photos
